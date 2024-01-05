@@ -1,3 +1,5 @@
+use std::fs::DirBuilder;
+
 fn main() {
     let args = std::env::args().collect::<Vec<String>>();
 
@@ -10,8 +12,11 @@ fn main() {
             return;
         }
 
-        std::fs::create_dir(".rit").expect("Failed to create .rit directory");
-        std::fs::create_dir(".rit/objects").expect("Failed to create .rit/objects directory");
-        std::fs::create_dir(".rit/refs").expect("Failed to create .rit/refs directory");
+        for dir in [".rit/objects", ".rit/refs"] {
+            DirBuilder::new()
+                .recursive(true)
+                .create(dir)
+                .expect("Failed to create .rit directory");
+        }
     }
 }
