@@ -60,14 +60,17 @@ fn get_gitignore_files() -> Option<Vec<String>> {
 fn list_files(dir: &str) -> Vec<String> {
     let mut files = Vec::new();
     let mut gitignore_files = get_gitignore_files().unwrap();
-    gitignore_files.append(&mut vec![".git".to_string(), ".rit".to_string()]);
+    gitignore_files.append(&mut vec!["./.git".to_string(), "./.rit".to_string()]);
 
     for entry in std::fs::read_dir(dir).expect("Failed to read directory") {
         let entry = entry.expect("Failed to read entry");
         let path = entry.path();
 
-        //TODO: Add support for .gitignore
-        if path.is_file() {
+        let is_in_gitignore = gitignore_files.clone().into_iter().any(|gf| {
+            path.starts_with(gf.clone()) || path.starts_with(["./".to_owned(), gf.clone()].join(""))
+        });
+
+        if path.is_file() && !is_in_gitignore {
             files.push(
                 path.to_str()
                     .expect("Failed to convert path to string")
