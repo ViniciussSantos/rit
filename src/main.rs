@@ -59,7 +59,12 @@ fn get_gitignore_files() -> Option<Vec<String>> {
 
 fn list_files(dir: &str) -> Vec<String> {
     let mut files = Vec::new();
-    let mut gitignore_files = get_gitignore_files().unwrap();
+
+    let mut gitignore_files = match get_gitignore_files() {
+        Some(v) => v,
+        None => vec![],
+    };
+
     gitignore_files.append(&mut vec!["./.git".to_string(), "./.rit".to_string()]);
 
     for entry in std::fs::read_dir(dir).expect("Failed to read directory") {
