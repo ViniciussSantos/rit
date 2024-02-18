@@ -2,8 +2,8 @@ use sha1::{Digest, Sha1};
 
 #[derive(Debug)]
 pub struct Blob {
-    oid: String,
-    data: String,
+    pub oid: String,
+    pub data: String,
 }
 
 impl Blob {
