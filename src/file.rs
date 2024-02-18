@@ -1,5 +1,9 @@
 use std::fs;
 
+use flate2::write::ZlibEncoder;
+use flate2::Compression;
+use std::io::prelude::*;
+
 use crate::blob::Blob;
 
 pub fn get_gitignore_files() -> Option<Vec<String>> {
@@ -64,6 +68,16 @@ pub fn read_file_content(file_path: String) -> String {
     content
 }
 
-pub fn write_object_to_file(blob: Blob) -> String {
-    unimplemented!()
+pub fn write_object_to_file(blob: Blob) {
+    let path = ".rit/objects/".to_string() + &blob.oid[0..2] + "/" + &blob.oid[2..40];
+
+    let content =
+        "blob".to_string() + " " + &blob.data.as_bytes().len().to_string() + "\n" + &blob.data;
+
+    fs::create_dir_all(".rit/objects/".to_string() + &blob.oid[0..2]).unwrap();
+
+    let mut encoder = ZlibEncoder::new(Vec::new(), Compression::default());
+    let _ = encoder.write_all(content.as_bytes());
+
+    fs::write(path, encoder.finish().unwrap()).unwrap();
 }

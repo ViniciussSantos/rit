@@ -32,10 +32,11 @@ fn init() {
 
 fn commit() {
     let files_to_add = file::list_files(".");
+    println!("Files to add: {:?}", files_to_add);
 
-    for file in files_to_add {
-        let content = file::read_file_content(file);
+    for f in files_to_add {
+        let content = file::read_file_content(f);
         let b: blob::Blob = blob::Blob::new(content);
-        println!("Blob: {:?}", b);
+        file::write_object_to_file(b);
     }
 }
