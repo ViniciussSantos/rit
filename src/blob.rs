@@ -13,4 +13,8 @@ impl Blob {
             data,
         }
     }
+
+    pub fn object_type(&self) -> String {
+        "blob".to_string()
+    }
 }

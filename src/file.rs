@@ -72,7 +72,7 @@ pub fn write_object_to_file(blob: Blob) {
     let path = ".rit/objects/".to_string() + &blob.oid[0..2] + "/" + &blob.oid[2..40];
 
     let content =
-        "blob".to_string() + " " + &blob.data.as_bytes().len().to_string() + "\n" + &blob.data;
+        blob.object_type() + " " + &blob.data.as_bytes().len().to_string() + "\n" + &blob.data;
 
     fs::create_dir_all(".rit/objects/".to_string() + &blob.oid[0..2]).unwrap();
 
