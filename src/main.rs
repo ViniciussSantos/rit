@@ -3,6 +3,7 @@ use std::fs::DirBuilder;
 mod blob;
 mod entry;
 mod file;
+mod tree;
 
 fn main() {
     let args = std::env::args().collect::<Vec<String>>();
