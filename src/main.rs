@@ -1,6 +1,7 @@
 use std::fs::DirBuilder;
 
 mod blob;
+mod entry;
 mod file;
 
 fn main() {
