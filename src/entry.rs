@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Entry {
     pub name: String,
     pub oid: String,
