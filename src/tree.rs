@@ -1,4 +1,8 @@
+use std::fmt::Display;
+
 use crate::entry::Entry;
+
+const MODE: &str = "100644";
 
 pub struct Tree {
     oid: String,
@@ -10,11 +14,22 @@ impl Tree {
         Tree { oid, entries }
     }
 
-    pub fn object_type(&self) -> String {
+    pub fn object_type() -> String {
         "tree".to_string()
     }
+}
 
-    pub fn to_string() -> String {
-        unimplemented!()
+impl Display for Tree {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut entries = self.entries.clone();
+
+        entries.sort_by(|a, b| a.name.cmp(&b.name));
+
+        let result = entries
+            .iter()
+            .map(|entry| format!("{} {} {}\0", MODE, entry.oid, entry.name))
+            .collect::<Vec<String>>()
+            .join("");
+        write!(f, "{}", result)
     }
 }
