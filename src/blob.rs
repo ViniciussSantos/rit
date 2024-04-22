@@ -9,7 +9,18 @@ pub struct Blob {
 impl Blob {
     pub fn new(data: String) -> Self {
         Blob {
-            oid: format!("{:X}", Sha1::digest(data.as_bytes())),
+            oid: format!(
+                "{:X}",
+                Sha1::digest(
+                    [
+                        "blob".to_string(),
+                        format!("{:x}", data.clone().as_bytes().len()),
+                        data.clone(),
+                    ]
+                    .join("")
+                    .as_bytes(),
+                )
+            ),
             data,
         }
     }
