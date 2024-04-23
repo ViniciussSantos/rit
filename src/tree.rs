@@ -1,35 +1,42 @@
-use std::fmt::Display;
+use sha1::{Digest, Sha1};
 
 use crate::entry::Entry;
 
-const MODE: &str = "100644";
-
+#[derive(Debug)]
 pub struct Tree {
-    oid: String,
-    entries: Vec<Entry>,
+    pub oid: String,
+    pub entries: Vec<Entry>,
+    pub content: String,
 }
 
 impl Tree {
-    pub fn new(oid: String, entries: Vec<Entry>) -> Self {
-        Tree { oid, entries }
-    }
+    const MODE: &'static str = "100644";
 
-    pub fn object_type() -> String {
-        "tree".to_string()
-    }
-}
-
-impl Display for Tree {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut entries = self.entries.clone();
-
+    pub fn new(mut entries: Vec<Entry>) -> Self {
         entries.sort_by(|a, b| a.name.cmp(&b.name));
 
-        let result = entries
+        let content = Self::create_content(&entries);
+
+        let oid = {
+            let mut hasher = Sha1::new();
+            hasher.update(&content);
+            let result = hasher.finalize();
+            hex::encode(result)
+        };
+
+        Tree {
+            oid,
+            entries,
+            content,
+        }
+    }
+
+    pub fn create_content(entries: &[Entry]) -> String {
+        let data = entries
             .iter()
-            .map(|entry| format!("{} {} {}\0", MODE, entry.oid, entry.name))
-            .collect::<Vec<String>>()
-            .join("");
-        write!(f, "{}", result)
+            .map(|entry| format!("{:?} {:?}\0{:}", Self::MODE, entry.name, entry.oid))
+            .collect::<Vec<String>>();
+
+        data.join("")
     }
 }

@@ -35,10 +35,18 @@ fn init() {
 fn commit() {
     let files_to_add = file::list_files(".");
     println!("Files to add: {:?}", files_to_add);
+    let mut entries: Vec<entry::Entry> = vec![];
 
-    for f in files_to_add {
-        let content = file::read_file_content(f);
+    for f in &files_to_add {
+        let content = file::read_file_content(f.to_string());
         let b: blob::Blob = blob::Blob::new(content);
-        file::write_object_to_file(b);
+        file::write_object_to_file(&b);
+
+        let entry = entry::Entry::new(f.to_string(), b.oid);
+
+        entries.push(entry);
     }
+
+    let tree = tree::Tree::new(entries);
+    println!("Tree: {:?}", tree);
 }
