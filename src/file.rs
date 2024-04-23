@@ -45,6 +45,7 @@ pub fn list_files(dir: &str) -> Vec<String> {
         let path = entry.path();
 
         //TODO: make gitignore work with nested files and folders
+        //TODO: refactor this to not need cloning
         let is_in_gitignore = gitignore_files.clone().into_iter().any(|gf| {
             path.starts_with(gf.clone()) || path.starts_with(["./".to_owned(), gf.clone()].join(""))
         });
@@ -68,7 +69,8 @@ pub fn read_file_content(file_path: String) -> String {
     content
 }
 
-pub fn write_object_to_file(blob: Blob) {
+//TODO: Refactor this to be generic for all objects (Blob and Tree)
+pub fn write_object_to_file(blob: &Blob) {
     let path = ".rit/objects/".to_string() + &blob.oid[0..2] + "/" + &blob.oid[2..40];
 
     let content =
